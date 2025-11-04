@@ -1,4 +1,3 @@
-/* filepath: c:\Users\corey\Desktop\grade_calc\style.css */
 /* ...existing code... */
 body {
   font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
@@ -40,11 +39,13 @@ h1 { margin-bottom: 8px; font-weight:600; color:#0f1724; }
 
 .opt-wrap { display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:8px; }
 
+/* grid (2 x 4 layout target) */
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   align-items: start;
+  grid-auto-rows: minmax(120px, auto);
 }
 
 /* responsive */
@@ -55,6 +56,7 @@ h1 { margin-bottom: 8px; font-weight:600; color:#0f1724; }
   .grid { grid-template-columns: 1fr; }
 }
 
+/* card base */
 .class-card {
   background: #fff;
   border-radius: 10px;
@@ -66,6 +68,8 @@ h1 { margin-bottom: 8px; font-weight:600; color:#0f1724; }
   gap:8px;
   transition: transform .12s ease, box-shadow .12s ease;
   overflow: hidden;
+  box-sizing: border-box;
+  min-width: 220px; /* avoid collapse at zoom */
 }
 .class-card:hover { transform: translateY(-4px); box-shadow: 0 10px 26px rgba(15,23,36,0.09); }
 
@@ -81,7 +85,16 @@ h1 { margin-bottom: 8px; font-weight:600; color:#0f1724; }
 }
 
 /* components layout: name | avg | weight | optimize | remove */
-.components { display:flex; flex-direction:column; gap:8px; padding-top:4px; }
+/* allow component list to scroll if it overflows (helps at different zooms) */
+.components {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding-top:4px;
+  max-height: 160px;
+  overflow: auto;
+  padding-right: 6px;
+}
 
 .component {
   display: grid;
@@ -89,7 +102,7 @@ h1 { margin-bottom: 8px; font-weight:600; color:#0f1724; }
   gap:8px;
   align-items:center;
 }
-.component input { padding:8px; border-radius:8px; border:1px solid rgba(15,23,36,0.06); }
+.component input { padding:8px; border-radius:8px; border:1px solid rgba(15,23,36,0.06); background: transparent; }
 .component .comp-name { padding-left:10px; }
 .component .avg, .component .weight { width:100%; box-sizing:border-box; }
 .remove-comp {
@@ -133,8 +146,9 @@ h1 { margin-bottom: 8px; font-weight:600; color:#0f1724; }
   margin-top:4px;
 }
 
+/* result / details */
 .result {
-  white-space: pre-wrap;
+  white-space: normal;
   font-size: 0.9em;
   color: #111;
   background: rgba(10,14,20,0.02);
@@ -143,6 +157,264 @@ h1 { margin-bottom: 8px; font-weight:600; color:#0f1724; }
   border:1px solid rgba(15,23,36,0.03);
   margin-top:6px;
 }
+
+/* details collapse styling to reduce clutter */
+.result-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 6px 0;
+  list-style: none;
+}
+.result-details .details-body {
+  padding: 8px 0 4px;
+  color: #334155;
+}
+.detail-line {
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(15,23,36,0.04);
+  font-size: 0.9em;
+}
+
+/* weight warning */
+.weight-warn {
+  color: #b45309;
+  font-size: 0.9em;
+  display:inline-block;
+  margin-left:8px;
+}
+
+/* drag & drop visuals */
+.class-card.dragging { opacity: 0.6; transform: scale(0.98); }
+.class-card.drop-target {
+  outline: 3px dashed rgba(11,114,255,0.18);
+  outline-offset: -6px;
+}
+
+/* ensure details and result layout remain tidy */
+.result { padding: 8px 10px; }
+
+/* summary area */
 #summary { margin-top:12px; padding:12px; background:#fff; border-radius:10px; border:1px solid #eef2ff; box-shadow:0 6px 18px rgba(11,114,255,0.02); }
 .summary-line { margin-bottom:6px; font-weight:600; color:#0f1724; }
 .overall { color:#4b5563; font-size:0.9em; margin-top:8px; }
+
+/* small accessibility / hover fixes */
+button:focus, input:focus, .optimize-comp:focus {
+  outline: 2px solid rgba(11,114,255,0.16);
+  outline-offset: 2px;
+}
+
+/* small scrollbar styling for modern browsers */
+.components::-webkit-scrollbar { width: 10px; }
+.components::-webkit-scrollbar-thumb { background: rgba(15,23,36,0.06); border-radius: 8px; }
+/* filepath: c:\Users\corey\Desktop\grade_calc\style.css */
+/* filepath: c:\Users\corey\Desktop\grade_calc\style.css */
+/* ...existing code... */
+body {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  margin: 16px;
+  background: linear-gradient(180deg,#f4f6fb 0%, #ffffff 100%);
+  color: #222;
+}
+h1 { margin-bottom: 8px; font-weight:600; color:#0f1724; }
+
+#controls {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom:12px;
+  flex-wrap:wrap;
+}
+#controls button {
+  background:#0b72ff;
+  color:#fff;
+  border:none;
+  padding:8px 10px;
+  border-radius:6px;
+  cursor:pointer;
+  box-shadow:0 2px 6px rgba(11,114,255,0.12);
+}
+#controls button:hover { transform: translateY(-1px); }
+#limits { color:#666; font-size:0.9em; margin-left:8px; }
+
+.goal-wrap {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background: rgba(11,114,255,0.06);
+  padding:6px 8px;
+  border-radius:8px;
+  font-weight:600;
+}
+.goal-wrap input { width:80px; padding:6px 8px; border-radius:6px; border:1px solid rgba(15,23,36,0.06); }
+
+.opt-wrap { display:flex; align-items:center; gap:6px; padding:6px 8px; border-radius:8px; }
+
+/* grid (2 x 4 layout target) */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  align-items: start;
+  grid-auto-rows: minmax(120px, auto);
+}
+
+/* responsive */
+@media (max-width: 1100px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+}
+
+/* card base */
+.class-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 6px 18px rgba(15,23,36,0.06);
+  min-height: 140px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  transition: transform .12s ease, box-shadow .12s ease;
+  overflow: hidden;
+  box-sizing: border-box;
+  min-width: 220px; /* avoid collapse at zoom */
+}
+.class-card:hover { transform: translateY(-4px); box-shadow: 0 10px 26px rgba(15,23,36,0.09); }
+
+.card-header { display:flex; gap:8px; align-items:center; }
+.course-name { flex:1; padding:8px; border-radius:8px; border:1px solid rgba(15,23,36,0.06); background: transparent; font-weight:600; }
+
+.card-header .remove-class {
+  background: transparent;
+  border:1px solid rgba(15,23,36,0.06);
+  padding:6px 8px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* components layout: name | avg | weight | optimize | remove */
+/* allow component list to scroll if it overflows (helps at different zooms) */
+.components {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding-top:4px;
+  max-height: 160px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.component {
+  display: grid;
+  grid-template-columns: 1fr 96px 96px 36px 36px;
+  gap:8px;
+  align-items:center;
+}
+.component input { padding:8px; border-radius:8px; border:1px solid rgba(15,23,36,0.06); background: transparent; }
+.component .comp-name { padding-left:10px; }
+.component .avg, .component .weight { width:100%; box-sizing:border-box; }
+.remove-comp {
+  background:#ff6b6b;
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  padding:6px 8px;
+  cursor:pointer;
+  font-weight:700;
+  line-height:1;
+}
+
+/* optimize button */
+.optimize-comp {
+  background:#ffd66b;
+  color:#1f2937;
+  border:none;
+  border-radius:8px;
+  padding:6px 8px;
+  cursor:pointer;
+  display:none; /* shown only when optimize mode toggled */
+}
+
+/* actions */
+.card-actions { display:flex; gap:8px; }
+.card-actions button {
+  background:#0b72ff;
+  color:#fff;
+  border:none;
+  padding:8px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.card-actions button:hover { opacity:0.95; transform: translateY(-1px); }
+
+.comp-note {
+  grid-column: 1 / -1;
+  font-size:0.85em;
+  color:#334155;
+  margin-top:4px;
+}
+
+/* result / details */
+.result {
+  white-space: normal;
+  font-size: 0.9em;
+  color: #111;
+  background: rgba(10,14,20,0.02);
+  padding:8px;
+  border-radius:8px;
+  border:1px solid rgba(15,23,36,0.03);
+  margin-top:6px;
+}
+
+/* details collapse styling to reduce clutter */
+.result-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 6px 0;
+  list-style: none;
+}
+.result-details .details-body {
+  padding: 8px 0 4px;
+  color: #334155;
+}
+.detail-line {
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(15,23,36,0.04);
+  font-size: 0.9em;
+}
+
+/* weight warning */
+.weight-warn {
+  color: #b45309;
+  font-size: 0.9em;
+  display:inline-block;
+  margin-left:8px;
+}
+
+/* drag & drop visuals */
+.class-card.dragging { opacity: 0.6; transform: scale(0.98); }
+.class-card.drop-target {
+  outline: 3px dashed rgba(11,114,255,0.18);
+  outline-offset: -6px;
+}
+
+/* ensure details and result layout remain tidy */
+.result { padding: 8px 10px; }
+
+/* summary area */
+#summary { margin-top:12px; padding:12px; background:#fff; border-radius:10px; border:1px solid #eef2ff; box-shadow:0 6px 18px rgba(11,114,255,0.02); }
+.summary-line { margin-bottom:6px; font-weight:600; color:#0f1724; }
+.overall { color:#4b5563; font-size:0.9em; margin-top:8px; }
+
+/* small accessibility / hover fixes */
+button:focus, input:focus, .optimize-comp:focus {
+  outline: 2px solid rgba(11,114,255,0.16);
+  outline-offset: 2px;
+}
+
+/* small scrollbar styling for modern browsers */
+.components::-webkit-scrollbar { width: 10px; }
+.components::-webkit-scrollbar-thumb { background: rgba(15,23,36,0.06); border-radius: 8px; }

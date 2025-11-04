@@ -1,4 +1,3 @@
-// ...existing code...
 const MAX_CLASSES = 8;
 let nextClassId = 1;
 const classesContainer = document.getElementById('classes');
@@ -17,8 +16,28 @@ goalInput.addEventListener('input', () => saveState());
 loadState();
 enableDragAndDrop(); // set up container handlers
 
+// ---------------------- helpers for stable hue ----------------------
+function computeHueFromId(id) {
+  if (!isNaN(Number(id))) return (Number(id) * 47) % 360;
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) | 0;
+  return Math.abs(h) % 360;
+}
+function ensureHue(card) {
+  let hue = card.getAttribute('data-hue');
+  if (!hue) {
+    hue = computeHueFromId(card.dataset.classId || String(Date.now()));
+    card.setAttribute('data-hue', hue);
+  }
+  card.style.background = `linear-gradient(135deg, hsl(${hue} 80% 98%), #ffffff)`;
+  card.style.borderLeft = `6px solid hsl(${hue} 60% 45%)`;
+}
+
 // ---------------------- persistence helpers ----------------------
 function saveState() {
+  // ensure every card has a stable hue before saving
+  document.querySelectorAll('.class-card').forEach(c => ensureHue(c));
+
   const classes = Array.from(document.querySelectorAll('.class-card')).map(card => {
     return {
       id: card.dataset.classId,
@@ -83,10 +102,10 @@ function addClassFromState(cls) {
   card.className = 'class-card';
   card.dataset.classId = id;
 
-  const hue = cls.hue ?? ((Number(id) * 47) % 360);
+  // set hue (use provided hue if present, else compute stable hue)
+  const hue = (cls.hue != null) ? cls.hue : computeHueFromId(id);
   card.setAttribute('data-hue', hue);
-  card.style.background = `linear-gradient(135deg, hsl(${hue} 80% 98%), #ffffff)`;
-  card.style.borderLeft = `6px solid hsl(${hue} 60% 45%)`;
+  ensureHue(card);
 
   card.innerHTML = `
     <div class="card-header">
@@ -429,18 +448,15 @@ function enableDragAndDrop() {
 
     if (!draggedEl) return;
 
-    // If dropped on a card, insert before/after based on pointer
     if (target && target !== draggedEl) {
       const rect = target.getBoundingClientRect();
       const middleX = rect.left + rect.width / 2;
-      // for grid behavior, decide before/after by horizontal position
       if (e.clientX < middleX) {
         classesContainer.insertBefore(draggedEl, target);
       } else {
         classesContainer.insertBefore(draggedEl, target.nextSibling);
       }
     } else {
-      // dropped in empty area or onto itself => append to end
       classesContainer.appendChild(draggedEl);
     }
 
@@ -458,4 +474,3 @@ function escapeHtml(str) {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 }
-// ...existing code...

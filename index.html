@@ -1,0 +1,37 @@
+<!-- ...existing code... -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grade Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Grade Calculator</h1>
+
+  <div id="controls">
+    <button id="addClassBtn">Add Course</button>
+    <button id="calculateBtn">Calculate All Courses</button>
+
+    <label class="goal-wrap">
+      Goal grade
+      <input id="goalInput" type="number" min="0" max="100" step="0.1" placeholder="e.g. 93" />
+      %
+    </label>
+
+    <label class="opt-wrap">
+      <input id="optimizeToggle" type="checkbox" />
+      Optimize mode
+    </label>
+
+    <div id="limits">Max 8 courses, arranged 2 rows × 4 columns</div>
+  </div>
+
+  <div id="classes" class="grid"></div>
+
+  <div id="summary"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
